@@ -20,3 +20,12 @@ pub fn update_user_profile_by_id(
         .get_result(conn)
         .expect("error updating specified recor")
 }
+
+pub fn delete_user_profile_by_id(user_id: &i32, conn: &mut PgConnection) {
+    use crate::schema::user_profile::dsl::*;
+
+    diesel::delete(user_profile.filter(user_id.eq(user_id)))
+        .execute(conn)
+        .expect("error deleting the user record");
+}
+

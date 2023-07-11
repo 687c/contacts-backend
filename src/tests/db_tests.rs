@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::data::user_repository;
+    use crate::data::user_repository::{self, delete_user_profile_by_id};
     use crate::db::establish_db_connection;
     use crate::models::user::{NewUserProfile, UserProfile};
     use crate::schema::user_profile::dsl::*;
@@ -70,9 +70,14 @@ mod tests {
             assert_eq!(updated_user.first_name, _first_name);
             assert_eq!(updated_user.last_name, _last_name);
 
-            let res = read_user_profile_records(conn).unwrap();
+            let res = read_user_profile_records(conn)?;
             assert_eq!(res.len(), 1);
 
+            //deleting our user
+            delete_user_profile_by_id(&updated_user.user_id, conn);
+            let users = read_user_profile_records(conn)?;
+            assert!(users.is_empty());
+            
             Ok(())
         });
     }
